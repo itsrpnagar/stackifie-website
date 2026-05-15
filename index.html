@@ -792,10 +792,12 @@ async function doSearch() {
         const data = await res.json();
 
         if (data.success && data.events.length) {
-            // Deduplicate — same date + venue + time = same show, keep first only
+            // Deduplicate — same date + city + time = same show, keep first only
+            // venue name alag ho sakta hai (Richard Rodgers vs Richard Rodgers-NY)
+            // isliye city + rawDate + time use karo
             const seen = new Set();
             const uniqueEvents = data.events.filter(ev => {
-                const key = `${ev.rawDate}_${ev.venue}_${ev.date}`;
+                const key = `${ev.rawDate}_${ev.city}_${ev.date}`;
                 if (seen.has(key)) return false;
                 seen.add(key);
                 return true;
