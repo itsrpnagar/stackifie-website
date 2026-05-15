@@ -451,7 +451,7 @@ function cardHTML(event) {
     const location = [event.venue, event.city + (event.state ? ', '+event.state : '')].filter(Boolean).join(' • ');
     return `
     <div class="col-md-3 col-sm-6 col-12">
-        <a href="tel:+18444278585" class="grid-card">
+        <a href="${event.url || 'https://www.ticketmaster.com'}" target="_blank" rel="noopener" class="grid-card">
             <img src="${safeImg(event.image)}" alt="${event.name}" onerror="this.src='${FALLBACK_IMG}'">
             <div class="card-body p-3">
                 <p class="grid-date mb-1">${event.date||'UPCOMING'}</p>
@@ -475,7 +475,7 @@ function trendingRowHTML(event) {
             <div class="text-muted small">${location}</div>
         </div>
         <div class="col-auto ms-auto ms-md-0 mt-2 mt-md-0">
-            <a href="tel:+18444278585" class="btn-find">See Tickets</a>
+            <a href="${event.url || 'https://www.ticketmaster.com'}" target="_blank" rel="noopener" class="btn-find">See Tickets</a>
         </div>
     </div>`;
 }
@@ -483,7 +483,7 @@ function trendingRowHTML(event) {
 function searchCardHTML(attr) {
     return `
     <div class="col-md-3 col-sm-6 col-12">
-        <a href="tel:+18444278585" class="grid-card border-0 shadow-sm" style="text-decoration:none;">
+        <a href="${attr.url || 'https://www.ticketmaster.com'}" target="_blank" rel="noopener" class="grid-card border-0 shadow-sm" style="text-decoration:none;">
             <img src="${safeImg(attr.image)}" alt="${attr.name}"
                  style="height:160px;object-fit:cover;width:100%;display:block;"
                  onerror="this.src='${FALLBACK_IMG}'">
@@ -498,7 +498,7 @@ function searchCardHTML(attr) {
 function searchResultHTML(event) {
     const location = [event.venue, event.city+(event.state?', '+event.state:'')].filter(Boolean).join(' • ');
     return `
-    <a href="tel:+18444278585" class="search-result-item">
+    <a href="${event.url || 'https://www.ticketmaster.com'}" target="_blank" rel="noopener" class="search-result-item">
         <img src="${safeImg(event.image)}" alt="${event.name}" class="search-result-img" onerror="this.src='${FALLBACK_IMG}'">
         <div class="flex-grow-1">
             <div class="fw-bold">${event.name}</div>
