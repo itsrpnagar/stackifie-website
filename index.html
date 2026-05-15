@@ -622,7 +622,6 @@ const fetchSearch = debounce(async (kw) => {
             <div class="suggest-item-rich" data-value="${s.label}">
                 ${thumbHtml}
                 <div class="suggest-body-rich">
-                    <div class="suggest-type-tag">${s.type === 'artist' ? 'Artist' : 'Event'}</div>
                     <div class="suggest-label-rich">${s.label}</div>
                     ${s.sub ? `<div class="suggest-sub-rich">${s.sub}</div>` : ''}
                 </div>
