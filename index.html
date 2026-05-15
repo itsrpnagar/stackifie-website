@@ -568,6 +568,8 @@ const fetchLocation = debounce(async (kw) => {
                 e.preventDefault();
                 locationInput.value = item.dataset.value;
                 closeDropdown(locationDropdown);
+                // Popular Near You update karo new city se
+                loadPopular(item.dataset.city || item.dataset.value);
             });
         });
 
@@ -668,16 +670,59 @@ async function loadFeatured() {
     }
 }
 
-async function loadPopular() {
+// ════════════════════════════════════════════════
+// IP DETECTION — Industry Standard (like TM/StubHub)
+// ipapi.co free tier — 1000 requests/day
+// ════════════════════════════════════════════════
+async function detectCity() {
     try {
-        const res  = await fetch(`${SERVER_URL}/api/popular?city=New+York`);
+        const res  = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        // Only use if US location detected
+        if (data.country_code === 'US' && data.city) {
+            return data.city;
+        }
+        return 'New York'; // Default fallback
+    } catch(e) {
+        return 'New York'; // Network error fallback
+    }
+}
+
+async function loadPopular(cityOverride = null) {
+    try {
+        // Priority: 1) User typed city, 2) IP detected city, 3) Default
+        const locationVal = locationInput.value.trim();
+        let city;
+
+        if (cityOverride) {
+            // Called with specific city (e.g. from IP detection)
+            city = cityOverride;
+        } else if (locationVal) {
+            // User ne location box mein city type ki
+            city = locationVal;
+        } else {
+            // IP se detect karo
+            city = await detectCity();
+        }
+
+        // Location box mein bhi fill karo (if empty)
+        if (!locationInput.value.trim()) {
+            locationInput.value = city;
+        }
+
+        // Section heading update karo
+        const heading = document.querySelector('#popular-section .section-title');
+        if (heading) heading.textContent = `Popular Near You — ${city}`;
+
+        const res  = await fetch(`${SERVER_URL}/api/popular?city=${encodeURIComponent(city)}`);
         const data = await res.json();
         const el   = document.getElementById('popular-events');
         el.innerHTML = data.success && data.events.length
             ? data.events.map(cardHTML).join('')
             : '<p class="text-muted col">Unable to load events.</p>';
     } catch(e) {
-        document.getElementById('popular-events').innerHTML = '<p class="text-muted col">Unable to connect to server.</p>';
+        document.getElementById('popular-events').innerHTML =
+            '<p class="text-muted col">Unable to connect to server.</p>';
     }
 }
 
