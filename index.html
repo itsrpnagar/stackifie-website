@@ -791,13 +791,29 @@ async function doSearch() {
         const res  = await fetch(`${SERVER_URL}/api/search?${params}`);
         const data = await res.json();
 
-        list.innerHTML = data.success && data.events.length
-            ? data.events.map(searchResultHTML).join('')
-            : `<div class="no-results">
+        if (data.success && data.events.length) {
+            // Deduplicate — same date + venue + time = same show, keep first only
+            const seen = new Set();
+            const uniqueEvents = data.events.filter(ev => {
+                const key = `${ev.rawDate}_${ev.venue}_${ev.date}`;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+            list.innerHTML = uniqueEvents.length
+                ? uniqueEvents.map(searchResultHTML).join('')
+                : `<div class="no-results">
+                    <h5>No events found 😕</h5>
+                    <p class="text-muted">Try a different keyword or city</p>
+                    <button onclick="resetToHome()" class="btn-find mt-2">Back to Home</button>
+                   </div>`;
+        } else {
+            list.innerHTML = `<div class="no-results">
                 <h5>No events found 😕</h5>
                 <p class="text-muted">Try a different keyword or city</p>
                 <button onclick="resetToHome()" class="btn-find mt-2">Back to Home</button>
                </div>`;
+        }
     } catch(e) {
         list.innerHTML = '<p class="text-muted text-center py-5">Search error. Please try again later.</p>';
     }
