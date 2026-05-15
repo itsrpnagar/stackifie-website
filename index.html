@@ -333,10 +333,10 @@
                     </div>
                     <div class="search-text">
                         <span class="search-label">Dates</span>
-                        <div style="position:relative; width:100%;">
+                        <div style="position:relative; width:100%; cursor:pointer;" onclick="document.getElementById('search-date').showPicker()">
                             <input type="date" id="search-date" class="search-input"
-                                   style="opacity:0; position:absolute; top:0; left:0; width:100%; height:100%; cursor:pointer; z-index:2;">
-                            <span id="date-display" style="font-size:16px; color:#999; pointer-events:none;">All Dates</span>
+                                   style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
+                            <span id="date-display" style="font-size:16px; color:#999;">All Dates</span>
                         </div>
                     </div>
                 </div>
