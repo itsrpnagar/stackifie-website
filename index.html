@@ -809,6 +809,7 @@ function resetToHome() {
     keywordInput.value  = '';
     locationInput.value = '';
     document.getElementById('search-date').value = '';
+    loadPopular(); // ← City re-detect + Popular refresh
 }
 
 // ════════════════════════════════════════════════
