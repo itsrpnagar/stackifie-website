@@ -34,6 +34,11 @@
         }
         .nav-links a { color:white; text-decoration:none; }
         .nav-links a:hover { opacity:0.8; }
+        .nav-links a.active {
+            border-bottom: 3px solid white;
+            padding-bottom: 2px;
+            font-weight: 800;
+        }
 
         /* ── SEARCH BAR ── */
         .search-bar-complex {
@@ -280,6 +285,7 @@
 
 <script>
     const SERVER_URL = 'https://api.stackifie.online';
+    let activeSegment = ''; // Current active segment filter
 </script>
 
 <div class="top-disclaimer-bar">
@@ -293,11 +299,10 @@
             <div class="nav-left">
                 <a href="/" class="navbar-brand">stackifie<span style="font-size:12px;vertical-align:super;">®</span></a>
                 <div class="nav-links">
-                    <a href="/">Concerts</a>
-                    <a href="/">Sports</a>
-                    <a href="/">Arts, Theater & Comedy</a>
-                    <a href="/">Family</a>
-                    <a href="/">Cities</a>
+                    <a href="#" class="nav-link-filter active" data-segment="">All Events</a>
+                    <a href="#" class="nav-link-filter" data-segment="Music">Concerts</a>
+                    <a href="#" class="nav-link-filter" data-segment="Sports">Sports</a>
+                    <a href="#" class="nav-link-filter" data-segment="Arts &amp; Theatre">Arts, Theater &amp; Comedy</a>
                 </div>
             </div>
         </div>
@@ -659,7 +664,8 @@ document.addEventListener('click', e => {
 // ════════════════════════════════════════════════
 async function loadFeatured() {
     try {
-        const res  = await fetch(`${SERVER_URL}/api/featured`);
+        const segParam = activeSegment ? `&segment=${encodeURIComponent(activeSegment)}` : '';
+        const res  = await fetch(`${SERVER_URL}/api/featured${segParam}`);
         const data = await res.json();
         const el   = document.getElementById('featured-events');
         el.innerHTML = data.success && data.events.length
@@ -709,7 +715,8 @@ async function loadPopular(cityOverride = null) {
         const heading = document.querySelector('#popular-section .section-title');
         if (heading) heading.textContent = `Popular Near You — ${city}`;
 
-        const res  = await fetch(`${SERVER_URL}/api/popular?city=${encodeURIComponent(city)}`);
+        const segParam = activeSegment ? `&segment=${encodeURIComponent(activeSegment)}` : '';
+        const res  = await fetch(`${SERVER_URL}/api/popular?city=${encodeURIComponent(city)}${segParam}`);
         const data = await res.json();
         const el   = document.getElementById('popular-events');
         el.innerHTML = data.success && data.events.length
@@ -723,7 +730,8 @@ async function loadPopular(cityOverride = null) {
 
 async function loadTrending() {
     try {
-        const res  = await fetch(`${SERVER_URL}/api/trending`);
+        const segParam = activeSegment ? `&segment=${encodeURIComponent(activeSegment)}` : '';
+        const res  = await fetch(`${SERVER_URL}/api/trending${segParam}`);
         const data = await res.json();
         const el   = document.getElementById('trending-events');
         el.innerHTML = data.success && data.events.length
@@ -806,6 +814,49 @@ function resetToHome() {
     document.getElementById('search-date').value = '';
     loadPopular(); // ← City re-detect + Popular refresh
 }
+
+// ════════════════════════════════════════════════
+// NAV FILTER — Concerts / Sports / Arts
+// ════════════════════════════════════════════════
+document.querySelectorAll('.nav-link-filter').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Active tab update
+        document.querySelectorAll('.nav-link-filter').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        // Segment update
+        activeSegment = link.dataset.segment;
+
+        // Search results hide — home show
+        document.getElementById('search-results-section').style.display = 'none';
+        ['featured-section','popular-section','trending-section','trending-searches-section']
+            .forEach(id => document.getElementById(id).style.display = 'block');
+
+        // Skeleton reload
+        document.getElementById('featured-events').innerHTML = `
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>`;
+        document.getElementById('trending-events').innerHTML = `
+            <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
+            <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
+            <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
+            <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>`;
+        document.getElementById('popular-events').innerHTML = `
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>`;
+
+        // Filtered data load karo
+        loadFeatured();
+        loadPopular();
+        loadTrending();
+    });
+});
 
 // ════════════════════════════════════════════════
 // EVENT LISTENERS + PAGE LOAD
