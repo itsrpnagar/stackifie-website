@@ -664,7 +664,7 @@ document.addEventListener('click', e => {
 // ════════════════════════════════════════════════
 async function loadFeatured() {
     try {
-        const segParam = activeSegment ? `&segment=${encodeURIComponent(activeSegment)}` : '';
+        const segParam = activeSegment ? `?segment=${encodeURIComponent(activeSegment)}` : '';
         const res  = await fetch(`${SERVER_URL}/api/featured${segParam}`);
         const data = await res.json();
         const el   = document.getElementById('featured-events');
@@ -730,7 +730,7 @@ async function loadPopular(cityOverride = null) {
 
 async function loadTrending() {
     try {
-        const segParam = activeSegment ? `&segment=${encodeURIComponent(activeSegment)}` : '';
+        const segParam = activeSegment ? `?segment=${encodeURIComponent(activeSegment)}` : '';
         const res  = await fetch(`${SERVER_URL}/api/trending${segParam}`);
         const data = await res.json();
         const el   = document.getElementById('trending-events');
