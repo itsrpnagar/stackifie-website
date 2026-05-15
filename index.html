@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stackifie | Buy Verified Tickets for Concerts & Sports</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231C38D9'/><text x='50%' y='50%' font-family='Arial, sans-serif' font-weight='900' font-size='75' fill='white' dominant-baseline='central' text-anchor='middle'>S</text></svg>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --tm-bright-blue: #1C38D9;
+            --tm-dark-blue: #05163d;
+            --tm-bg-gray: #f5f7f9;
+            --tm-text: #1f262d;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+            color: var(--tm-text);
+            margin: 0;
+        }
+
+        /* --- HEADER --- */
+        .tm-header-bg {
+            background-color: var(--tm-bright-blue);
+            padding-bottom: 30px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            color: white;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            color: white !important;
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            text-decoration: none;
+            font-style: italic;
+        }
+
+        .nav-links { display: none; }
+
+        @media (min-width: 992px) {
+            .nav-links {
+                display: flex;
+                gap: 20px;
+                font-weight: 600;
+                font-size: 15px;
+            }
+        }
+
+        .nav-links a { color: white; text-decoration: none; }
+        .nav-links a:hover { opacity: 0.8; }
+
+        /* --- SEARCH BAR --- */
+        .search-bar-complex {
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .search-section {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            border-right: 1px solid #ddd;
+            flex: 1;
+            background: white;
+        }
+
+        .search-section.main-search { flex: 2; border-right: none; }
+        .search-icon { margin-right: 12px; display: flex; align-items: center; }
+        .search-text { display: flex; flex-direction: column; width: 100%; }
+
+        .search-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #111;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .search-input {
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #333;
+            width: 100%;
+            background: transparent;
+        }
+
+        .btn-search-main {
+            background-color: var(--tm-bright-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 25px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin: 6px;
+            transition: background 0.2s;
+        }
+
+        .btn-search-main:hover { background-color: #1530c0; }
+        .mobile-search-icon { display: none; }
+
+        /* --- GRID CARDS --- */
+        .section-title { font-weight: 800; font-size: 22px; margin-bottom: 20px; color: var(--tm-text); }
+
+        .grid-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.2s, transform 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+        }
+
+        .grid-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            transform: translateY(-3px);
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .grid-card img {
+            height: 160px;
+            object-fit: cover;
+            width: 100%;
+            display: block;
+        }
+
+        .grid-date {
+            color: var(--tm-bright-blue);
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        /* --- LIST CARDS (Trending) --- */
+        .event-list-card {
+            border: none;
+            border-bottom: 1px solid #e0e0e0;
+            border-radius: 0;
+            transition: background 0.2s;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .event-list-card:hover { background-color: var(--tm-bg-gray); }
+        .date-box { text-align: center; min-width: 60px; }
+        .month { color: #d32f2f; font-weight: 800; font-size: 13px; text-transform: uppercase; }
+        .day { font-size: 22px; font-weight: 800; line-height: 1; }
+
+        .btn-find {
+            background-color: var(--tm-bright-blue);
+            color: white;
+            font-weight: 700;
+            border-radius: 4px;
+            padding: 8px 20px;
+            text-decoration: none;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .btn-find:hover { background-color: #1530c0; color: white; }
+
+        /* --- SKELETON LOADING --- */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-card { border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+        .skeleton-img  { height: 160px; width: 100%; }
+        .skeleton-line { height: 14px; margin: 10px 10px 6px; border-radius: 4px; }
+        .skeleton-line.short { width: 60%; }
+
+        /* --- SEARCH RESULTS --- */
+        #search-results-section { display: none; }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #eee;
+            gap: 15px;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.15s;
+        }
+
+        .search-result-item:hover { background: var(--tm-bg-gray); }
+
+        .search-result-img {
+            width: 72px;
+            height: 72px;
+            object-fit: cover;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 50px 20px;
+            color: #888;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #1f262d;
+            color: #9ea3a8;
+            padding: 40px 0 20px;
+            font-size: 13px;
+            margin-top: 50px;
+        }
+
+        .footer-minimal-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-minimal-links a { color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; }
+        .footer-minimal-links a:hover { text-decoration: underline; }
+
+        .footer-bottom { border-top: 1px solid #333; padding-top: 20px; text-align: center; }
+
+        /* --- TOP DISCLAIMER BAR --- */
+        .top-disclaimer-bar {
+            background-color: #111111;
+            color: #ffffff;
+            text-align: center;
+            font-size: 14px;
+            padding: 10px 15px;
+            font-weight: 700;
+        }
+
+        /* --- MOBILE --- */
+        @media (max-width: 768px) {
+            .tm-header-bg { padding-bottom: 0; }
+            .navbar-brand  { font-size: 1.5rem; }
+            .search-bar-wrapper { margin: 0 -12px; }
+
+            .search-bar-complex {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                border-radius: 0;
+                box-shadow: none;
+                border-bottom: 1px solid #ddd;
+                border-top: 1px solid #ddd;
+            }
+            .search-section {
+                padding: 12px 15px;
+                border-bottom: 1px solid #ddd;
+                border-right: none;
+                width: 100%;
+            }
+            .search-section:nth-child(1) { grid-column: 1 / 2; border-right: 1px solid #ddd; }
+            .search-section:nth-child(2) { grid-column: 2 / 3; }
+            .search-section.main-search  {
+                grid-column: 1 / 3;
+                border-bottom: none;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            .main-search .search-icon { display: none; }
+            .btn-search-main { display: none; }
+            .mobile-search-icon { display: block; color: var(--tm-bright-blue); margin-left: auto; cursor: pointer; }
+            .section-title { font-size: 20px; }
+            .footer-minimal-links { gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ✅ Railway deploy ke baad yahan apni Railway URL daalo -->
+<script>
+    // DNS active hone ke baad api.stackifie.online use hoga
+    const SERVER_URL = 'https://stackifie-server-production.up.railway.app';
+</script>
+
+<div class="top-disclaimer-bar">
+    Resale Marketplace: Prices may be above face value.
+</div>
+
+<!-- ══════ HEADER ══════ -->
+<div class="tm-header-bg">
+    <div class="container">
+        <div class="top-nav">
+            <div class="nav-left">
+                <a href="/" class="navbar-brand">stackifie<span style="font-size:12px;vertical-align:super;">®</span></a>
+                <div class="nav-links">
+                    <a href="/">Concerts</a>
+                    <a href="/">Sports</a>
+                    <a href="/">Arts, Theater & Comedy</a>
+                    <a href="/">Family</a>
+                    <a href="/">Cities</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH BAR -->
+        <div class="search-bar-wrapper">
+            <div class="search-bar-complex">
+                <!-- Location -->
+                <div class="search-section">
+                    <div class="search-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--tm-bright-blue)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    </div>
+                    <div class="search-text">
+                        <span class="search-label">Location</span>
+                        <input type="text" id="search-city" class="search-input" placeholder="City or Zip Code">
+                    </div>
+                </div>
+                <!-- Date -->
+                <div class="search-section">
+                    <div class="search-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--tm-bright-blue)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                    <div class="search-text">
+                        <span class="search-label">Dates</span>
+                        <input type="date" id="search-date" class="search-input">
+                    </div>
+                </div>
+                <!-- Keyword + Search Button -->
+                <div class="search-section main-search">
+                    <div class="search-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--tm-bright-blue)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                    <div class="search-text">
+                        <span class="search-label">Search</span>
+                        <input type="text" id="search-keyword" class="search-input" placeholder="Artist, Event or Venue">
+                    </div>
+                    <svg class="mobile-search-icon" id="mobile-search-btn" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <button class="btn-search-main" id="search-btn">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════ SEARCH RESULTS (hidden by default) ══════ -->
+<div class="container mt-5 pt-2" id="search-results-section">
+    <div class="d-flex align-items-center mb-4 gap-3">
+        <h2 class="section-title mb-0">Search Results</h2>
+        <button onclick="resetToHome()" style="background:none;border:1px solid #ccc;border-radius:4px;padding:6px 14px;font-size:13px;cursor:pointer;color:#555;">
+            ← Back to Home
+        </button>
+    </div>
+    <div id="search-results-list"></div>
+</div>
+
+<!-- ══════ FEATURED EVENTS ══════ -->
+<div class="container mt-5 pt-3" id="featured-section">
+    <h2 class="section-title">Featured Events</h2>
+    <div class="row g-4" id="featured-events">
+        <!-- Skeleton -->
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+    </div>
+</div>
+
+<!-- ══════ POPULAR NEAR YOU ══════ -->
+<div class="container mt-5 pt-3" id="popular-section">
+    <h2 class="section-title">Popular Near You</h2>
+    <div class="row g-4" id="popular-events">
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+    </div>
+</div>
+
+<!-- ══════ TRENDING EVENTS ══════ -->
+<div class="container my-5 pt-3" id="trending-section">
+    <h2 class="section-title">Trending Events</h2>
+    <div id="trending-events">
+        <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
+        <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
+        <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
+        <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
+    </div>
+</div>
+
+<!-- ══════ TRENDING SEARCHES ══════ -->
+<div class="container my-5 pt-2 pb-4" id="trending-searches-section">
+    <h2 class="section-title">Trending Searches</h2>
+    <div class="row g-4" id="trending-searches">
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+    </div>
+</div>
+
+<!-- ══════ FOOTER ══════ -->
+<footer>
+    <div class="container">
+        <div class="footer-minimal-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact Us</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+        </div>
+        <div class="footer-bottom">
+            <div class="mb-3">
+                <img src="https://img.icons8.com/color/48/000000/verified-badge.png" width="24" style="vertical-align:middle;margin-right:5px;" alt="Verified">
+                <span class="text-white fw-bold">100% Buyer Guarantee</span>
+            </div>
+            <p class="mb-1">&copy; 2026 <strong>Stackifie.online</strong> | A brand managed by <strong>Streamernet Info Private Limited</strong></p>
+            <p class="mb-3">Registered Office: 2169/11 Moti Nagar, Ambala, Haryana, 134003</p>
+            <p class="small opacity-50 mx-auto" style="max-width:800px;">
+                Disclaimer: Stackifie is a secondary market resale marketplace. We are not the primary ticket provider or official box office. Ticket prices are set by independent sellers and may be above or below face value.
+            </p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// ════════════════════════════════════════════════
+// FALLBACK IMAGE
+// ════════════════════════════════════════════════
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=600&q=80';
+
+function safeImg(src) {
+    return src || FALLBACK_IMG;
+}
+
+// ════════════════════════════════════════════════
+// TEMPLATE: Grid Event Card (Featured / Popular)
+// ════════════════════════════════════════════════
+function cardHTML(event) {
+    const location = [event.venue, event.city + (event.state ? ', ' + event.state : '')]
+        .filter(Boolean).join(' • ');
+    return `
+    <div class="col-md-3 col-sm-6 col-12">
+        <a href="tel:+18444278585" class="grid-card">
+            <img src="${safeImg(event.image)}" alt="${event.name}"
+                 onerror="this.src='${FALLBACK_IMG}'">
+            <div class="card-body p-3">
+                <p class="grid-date mb-1">${event.date || 'UPCOMING'}</p>
+                <h6 class="fw-bold mb-1" style="font-size:14px;line-height:1.3;">${event.name}</h6>
+                <p class="text-muted small mb-0">${location}</p>
+            </div>
+        </a>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════
+// TEMPLATE: Trending List Row
+// ════════════════════════════════════════════════
+function trendingRowHTML(event) {
+    const location = [event.venue, event.city + (event.state ? ', ' + event.state : '')]
+        .filter(Boolean).join(' • ');
+    return `
+    <div class="row align-items-center py-3 event-list-card">
+        <div class="col-auto date-box">
+            <div class="month">${event.monthShort || '---'}</div>
+            <div class="day">${event.dayNum || '--'}</div>
+        </div>
+        <div class="col px-3 px-md-4">
+            <div class="fw-bold fs-5">${event.name}</div>
+            <div class="text-muted small">${location}</div>
+        </div>
+        <div class="col-auto ms-auto ms-md-0 mt-2 mt-md-0">
+            <a href="tel:+18444278585" class="btn-find">See Tickets</a>
+        </div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════
+// TEMPLATE: Trending Search Card
+// ════════════════════════════════════════════════
+function searchCardHTML(attr) {
+    return `
+    <div class="col-md-3 col-sm-6 col-12">
+        <a href="tel:+18444278585" class="grid-card border-0 shadow-sm" style="text-decoration:none;">
+            <img src="${safeImg(attr.image)}" alt="${attr.name}"
+                 style="height:160px;object-fit:cover;width:100%;display:block;"
+                 onerror="this.src='${FALLBACK_IMG}'">
+            <div class="card-body text-center p-3">
+                <p class="grid-date mb-1 text-secondary">TOP SEARCH</p>
+                <h6 class="fw-bold mb-0">${attr.name}</h6>
+            </div>
+        </a>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════
+// TEMPLATE: Search Result Row
+// ════════════════════════════════════════════════
+function searchResultHTML(event) {
+    const location = [event.venue, event.city + (event.state ? ', ' + event.state : '')]
+        .filter(Boolean).join(' • ');
+    return `
+    <a href="tel:+18444278585" class="search-result-item">
+        <img src="${safeImg(event.image)}" alt="${event.name}" class="search-result-img"
+             onerror="this.src='${FALLBACK_IMG}'">
+        <div class="flex-grow-1">
+            <div class="fw-bold">${event.name}</div>
+            <div class="text-muted small">${event.date || 'Date TBD'}</div>
+            <div class="text-muted small">${location}</div>
+        </div>
+        <div class="ps-3">
+            <span class="btn-find">See Tickets</span>
+        </div>
+    </a>`;
+}
+
+// ════════════════════════════════════════════════
+// LOAD: Featured Events
+// ════════════════════════════════════════════════
+async function loadFeatured() {
+    try {
+        const res  = await fetch(`${SERVER_URL}/api/featured`);
+        const data = await res.json();
+        const el   = document.getElementById('featured-events');
+        if (data.success && data.events.length > 0) {
+            el.innerHTML = data.events.map(cardHTML).join('');
+        } else {
+            el.innerHTML = '<p class="text-muted col">Events load nahi ho sake. Thodi der baad try karein.</p>';
+        }
+    } catch (e) {
+        console.error('[Featured]', e);
+        document.getElementById('featured-events').innerHTML =
+            '<p class="text-muted col">Server se connect nahi ho pa raha.</p>';
+    }
+}
+
+// ════════════════════════════════════════════════
+// LOAD: Popular Near You (New York default)
+// ════════════════════════════════════════════════
+async function loadPopular() {
+    try {
+        const res  = await fetch(`${SERVER_URL}/api/popular?city=New+York`);
+        const data = await res.json();
+        const el   = document.getElementById('popular-events');
+        if (data.success && data.events.length > 0) {
+            el.innerHTML = data.events.map(cardHTML).join('');
+        } else {
+            el.innerHTML = '<p class="text-muted col">Events load nahi ho sake.</p>';
+        }
+    } catch (e) {
+        console.error('[Popular]', e);
+        document.getElementById('popular-events').innerHTML =
+            '<p class="text-muted col">Server se connect nahi ho pa raha.</p>';
+    }
+}
+
+// ════════════════════════════════════════════════
+// LOAD: Trending Events
+// ════════════════════════════════════════════════
+async function loadTrending() {
+    try {
+        const res  = await fetch(`${SERVER_URL}/api/trending`);
+        const data = await res.json();
+        const el   = document.getElementById('trending-events');
+        if (data.success && data.events.length > 0) {
+            el.innerHTML = data.events.map(trendingRowHTML).join('');
+        } else {
+            el.innerHTML = '<p class="text-muted">Events load nahi ho sake.</p>';
+        }
+    } catch (e) {
+        console.error('[Trending]', e);
+        document.getElementById('trending-events').innerHTML =
+            '<p class="text-muted">Server se connect nahi ho pa raha.</p>';
+    }
+}
+
+// ════════════════════════════════════════════════
+// LOAD: Trending Searches
+// ════════════════════════════════════════════════
+async function loadTrendingSearches() {
+    try {
+        const res  = await fetch(`${SERVER_URL}/api/trending-searches`);
+        const data = await res.json();
+        const el   = document.getElementById('trending-searches');
+        if (data.success && data.attractions.length > 0) {
+            el.innerHTML = data.attractions.map(searchCardHTML).join('');
+        } else {
+            el.innerHTML = '<p class="text-muted col">Data load nahi ho saka.</p>';
+        }
+    } catch (e) {
+        console.error('[TrendingSearches]', e);
+        document.getElementById('trending-searches').innerHTML =
+            '<p class="text-muted col">Server se connect nahi ho pa raha.</p>';
+    }
+}
+
+// ════════════════════════════════════════════════
+// SEARCH: Events
+// ════════════════════════════════════════════════
+async function doSearch() {
+    const keyword = document.getElementById('search-keyword').value.trim();
+    const city    = document.getElementById('search-city').value.trim();
+    const date    = document.getElementById('search-date').value;
+
+    if (!keyword && !city && !date) {
+        alert('Kuch toh search karo — Artist, City ya Date!');
+        return;
+    }
+
+    // Show search section, hide homepage sections
+    document.getElementById('search-results-section').style.display = 'block';
+    ['featured-section','popular-section','trending-section','trending-searches-section']
+        .forEach(id => document.getElementById(id).style.display = 'none');
+
+    const list = document.getElementById('search-results-list');
+    list.innerHTML = `
+        <div class="skeleton skeleton-line" style="height:80px;margin-bottom:10px;"></div>
+        <div class="skeleton skeleton-line" style="height:80px;margin-bottom:10px;"></div>
+        <div class="skeleton skeleton-line" style="height:80px;margin-bottom:10px;"></div>`;
+
+    try {
+        const params = new URLSearchParams();
+        if (keyword) params.append('keyword', keyword);
+        if (city)    params.append('city', city);
+        if (date)    params.append('date', date);
+
+        const res  = await fetch(`${SERVER_URL}/api/search?${params}`);
+        const data = await res.json();
+
+        if (data.success && data.events.length > 0) {
+            list.innerHTML = data.events.map(searchResultHTML).join('');
+        } else {
+            list.innerHTML = `
+                <div class="no-results">
+                    <h5>Koi event nahi mila 😕</h5>
+                    <p class="text-muted">Alag keyword ya city try karo</p>
+                    <button onclick="resetToHome()" class="btn-find mt-2">Back to Home</button>
+                </div>`;
+        }
+    } catch (e) {
+        console.error('[Search]', e);
+        list.innerHTML = '<p class="text-muted text-center py-5">Search mein error aaya. Thodi der baad try karein.</p>';
+    }
+}
+
+// ════════════════════════════════════════════════
+// RESET: Back to Homepage
+// ════════════════════════════════════════════════
+function resetToHome() {
+    document.getElementById('search-results-section').style.display = 'none';
+    ['featured-section','popular-section','trending-section','trending-searches-section']
+        .forEach(id => document.getElementById(id).style.display = 'block');
+    document.getElementById('search-keyword').value = '';
+    document.getElementById('search-city').value    = '';
+    document.getElementById('search-date').value    = '';
+}
+
+// ════════════════════════════════════════════════
+// EVENT LISTENERS
+// ════════════════════════════════════════════════
+document.getElementById('search-btn').addEventListener('click', doSearch);
+document.getElementById('mobile-search-btn').addEventListener('click', doSearch);
+document.getElementById('search-keyword').addEventListener('keypress', e => { if (e.key === 'Enter') doSearch(); });
+document.getElementById('search-city').addEventListener('keypress',    e => { if (e.key === 'Enter') doSearch(); });
+
+// ════════════════════════════════════════════════
+// PAGE LOAD: Saare sections load karo
+// ════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+    loadFeatured();
+    loadPopular();
+    loadTrending();
+    loadTrendingSearches();
+});
+</script>
+
+</body>
+</html>
