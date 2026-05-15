@@ -786,6 +786,8 @@ async function doSearch() {
         if (keyword) params.append('keyword', keyword);
         if (city)    params.append('city', city);
         if (date)    params.append('date', date);
+        // Nav filter active hai toh segment bhi pass karo
+        if (activeSegment) params.append('segment', activeSegment);
 
         const res  = await fetch(`${SERVER_URL}/api/search?${params}`);
         const data = await res.json();
