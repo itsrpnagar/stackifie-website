@@ -333,7 +333,11 @@
                     </div>
                     <div class="search-text">
                         <span class="search-label">Dates</span>
-                        <input type="date" id="search-date" class="search-input">
+                        <div style="position:relative; width:100%;">
+                            <input type="date" id="search-date" class="search-input"
+                                   style="opacity:0; position:absolute; top:0; left:0; width:100%; height:100%; cursor:pointer; z-index:2;">
+                            <span id="date-display" style="font-size:16px; color:#999; pointer-events:none;">All Dates</span>
+                        </div>
                     </div>
                 </div>
 
@@ -841,6 +845,8 @@ function resetToHome() {
     locationInput.value  = '';
     activeAttractionId   = ''; // Clear attractionId on reset
     document.getElementById('search-date').value = '';
+    const dateDisplay = document.getElementById('date-display');
+    if (dateDisplay) { dateDisplay.textContent = 'All Dates'; dateDisplay.style.color = '#999'; }
     loadPopular(); // ← City re-detect + Popular refresh
 }
 
@@ -890,6 +896,20 @@ document.querySelectorAll('.nav-link-filter').forEach(link => {
 // ════════════════════════════════════════════════
 // EVENT LISTENERS + PAGE LOAD
 // ════════════════════════════════════════════════
+// Date display update
+document.getElementById('search-date').addEventListener('change', function() {
+    const display = document.getElementById('date-display');
+    if (this.value) {
+        const d = new Date(this.value + 'T00:00:00');
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        display.textContent = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+        display.style.color = '#333';
+    } else {
+        display.textContent = 'All Dates';
+        display.style.color = '#999';
+    }
+});
+
 document.getElementById('search-btn').addEventListener('click', doSearch);
 document.getElementById('mobile-search-btn').addEventListener('click', doSearch);
 
