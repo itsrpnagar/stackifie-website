@@ -705,11 +705,6 @@ async function loadPopular(cityOverride = null) {
             city = await detectCity();
         }
 
-        // Location box mein bhi fill karo (if empty)
-        if (!locationInput.value.trim()) {
-            locationInput.value = city;
-        }
-
         // Section heading update karo
         const heading = document.querySelector('#popular-section .section-title');
         if (heading) heading.textContent = `Popular Near You — ${city}`;
