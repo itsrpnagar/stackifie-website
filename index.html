@@ -285,7 +285,8 @@
 
 <script>
     const SERVER_URL = 'https://api.stackifie.online';
-    let activeSegment = ''; // Current active segment filter
+    let activeSegment    = ''; // Current active segment filter
+    let activeAttractionId = ''; // Set when user clicks suggest item
 </script>
 
 <div class="top-disclaimer-bar">
@@ -619,7 +620,7 @@ const fetchSearch = debounce(async (kw) => {
                 : `<div class="suggest-thumb-placeholder">${s.label.charAt(0)}</div>`;
 
             return `
-            <div class="suggest-item-rich" data-value="${s.label}">
+            <div class="suggest-item-rich" data-value="${s.label}" data-id="${s.id || ''}">
                 ${thumbHtml}
                 <div class="suggest-body-rich">
                     <div class="suggest-label-rich">${s.label}</div>
@@ -633,7 +634,8 @@ const fetchSearch = debounce(async (kw) => {
         searchDropdown.querySelectorAll('.suggest-item-rich').forEach(item => {
             item.addEventListener('mousedown', (e) => {
                 e.preventDefault();
-                keywordInput.value = item.dataset.value;
+                keywordInput.value   = item.dataset.value;
+                activeAttractionId   = item.dataset.id || ''; // Store attractionId
                 closeDropdown(searchDropdown);
                 doSearch();
             });
@@ -645,7 +647,10 @@ const fetchSearch = debounce(async (kw) => {
     }
 }, 300);
 
-keywordInput.addEventListener('input',   e => fetchSearch(e.target.value.trim()));
+keywordInput.addEventListener('input', e => {
+    activeAttractionId = ''; // User ne manually type kiya — attractionId clear
+    fetchSearch(e.target.value.trim());
+});
 keywordInput.addEventListener('keydown', e => {
     if (e.key === 'Enter')  { closeDropdown(searchDropdown); doSearch(); }
     if (e.key === 'Escape') { closeDropdown(searchDropdown); }
@@ -782,10 +787,14 @@ async function doSearch() {
 
     try {
         const params = new URLSearchParams();
-        if (keyword) params.append('keyword', keyword);
-        if (city)    params.append('city', city);
-        if (date)    params.append('date', date);
-        // Nav filter active hai toh segment bhi pass karo
+        // attractionId available hai toh use karo — exact artist ke sab events
+        if (activeAttractionId) {
+            params.append('attractionId', activeAttractionId);
+        } else if (keyword) {
+            params.append('keyword', keyword);
+        }
+        if (city)          params.append('city', city);
+        if (date)          params.append('date', date);
         if (activeSegment) params.append('segment', activeSegment);
 
         const res  = await fetch(`${SERVER_URL}/api/search?${params}`);
@@ -828,8 +837,9 @@ function resetToHome() {
     document.getElementById('search-results-section').style.display = 'none';
     ['featured-section','popular-section','trending-section','trending-searches-section']
         .forEach(id => document.getElementById(id).style.display = 'block');
-    keywordInput.value  = '';
-    locationInput.value = '';
+    keywordInput.value   = '';
+    locationInput.value  = '';
+    activeAttractionId   = ''; // Clear attractionId on reset
     document.getElementById('search-date').value = '';
     loadPopular(); // ← City re-detect + Popular refresh
 }
