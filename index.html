@@ -327,13 +327,20 @@
                 </div>
 
                 <!-- Date -->
-                <div class="search-section">
+                <div class="search-section" style="position:relative;">
                     <div class="search-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--tm-bright-blue)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     </div>
-                    <div class="search-text">
+                    <div class="search-text" style="cursor:pointer;" onclick="toggleDatePicker()">
                         <span class="search-label">Dates</span>
-                        <input type="date" id="search-date" class="search-input">
+                        <span id="date-display-text" style="font-size:16px;color:#999;">All Dates</span>
+                    </div>
+                    <div id="date-picker-dropdown" style="display:none; position:absolute; top:calc(100% + 4px); left:0; background:white; border:1px solid #ddd; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:16px; z-index:9999; min-width:260px;">
+                        <input type="date" id="search-date" style="width:100%; border:1px solid #ddd; border-radius:6px; padding:8px 12px; font-size:15px; font-family:'Inter',sans-serif; outline:none; color:#333; box-sizing:border-box;">
+                        <div style="display:flex; gap:8px; margin-top:12px;">
+                            <button onclick="resetDate()" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px; background:white; color:#555; font-size:14px; cursor:pointer; font-family:'Inter',sans-serif;">Reset</button>
+                            <button onclick="applyDate()" style="flex:1; padding:8px; border:none; border-radius:6px; background:var(--tm-bright-blue); color:white; font-size:14px; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif;">Apply</button>
+                        </div>
                     </div>
                 </div>
 
@@ -840,6 +847,8 @@ function resetToHome() {
     locationInput.value  = '';
     activeAttractionId   = ''; // Clear attractionId on reset
     document.getElementById('search-date').value = '';
+    const dtxt = document.getElementById('date-display-text');
+    if (dtxt) { dtxt.textContent = 'All Dates'; dtxt.style.color = '#999'; }
     loadPopular(); // ← City re-detect + Popular refresh
 }
 
@@ -890,6 +899,43 @@ document.querySelectorAll('.nav-link-filter').forEach(link => {
 // EVENT LISTENERS + PAGE LOAD
 // ════════════════════════════════════════════════
 
+
+// Date Picker functions
+function toggleDatePicker() {
+    const dd = document.getElementById('date-picker-dropdown');
+    dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+
+function resetDate() {
+    document.getElementById('search-date').value = '';
+    document.getElementById('date-display-text').textContent = 'All Dates';
+    document.getElementById('date-display-text').style.color = '#999';
+    document.getElementById('date-picker-dropdown').style.display = 'none';
+}
+
+function applyDate() {
+    const val = document.getElementById('search-date').value;
+    const display = document.getElementById('date-display-text');
+    if (val) {
+        const d = new Date(val + 'T00:00:00');
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        display.textContent = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+        display.style.color = '#333';
+    } else {
+        display.textContent = 'All Dates';
+        display.style.color = '#999';
+    }
+    document.getElementById('date-picker-dropdown').style.display = 'none';
+}
+
+// Close date picker on outside click
+document.addEventListener('click', function(e) {
+    const dp = document.getElementById('date-picker-dropdown');
+    const section = dp?.closest('.search-section');
+    if (dp && section && !section.contains(e.target)) {
+        dp.style.display = 'none';
+    }
+});
 
 document.getElementById('search-btn').addEventListener('click', doSearch);
 document.getElementById('mobile-search-btn').addEventListener('click', doSearch);
