@@ -77,48 +77,24 @@
             width:100%; background:transparent;
         }
 
-        /* Date input — show placeholder text when empty */
-        .date-input {
-            color: #333;
-        }
-        .date-input:not([value=""]):valid {
-            color: #333;
-        }
-        /* Hide native placeholder dd/mm/yyyy — show custom */
-        input[type="date"].date-input::-webkit-datetime-edit-text,
-        input[type="date"].date-input::-webkit-datetime-edit-month-field,
-        input[type="date"].date-input::-webkit-datetime-edit-day-field,
-        input[type="date"].date-input::-webkit-datetime-edit-year-field {
-            color: transparent;
-        }
-        input[type="date"].date-input::-webkit-datetime-edit-text:focus,
-        input[type="date"].date-input::-webkit-datetime-edit-month-field:focus,
-        input[type="date"].date-input::-webkit-datetime-edit-day-field:focus,
-        input[type="date"].date-input::-webkit-datetime-edit-year-field:focus,
-        input[type="date"].date-input.has-value::-webkit-datetime-edit-text,
-        input[type="date"].date-input.has-value::-webkit-datetime-edit-month-field,
-        input[type="date"].date-input.has-value::-webkit-datetime-edit-day-field,
-        input[type="date"].date-input.has-value::-webkit-datetime-edit-year-field {
-            color: #333;
-        }
-        /* Show "All Dates" as placeholder */
-        .date-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        .date-wrapper::before {
-            content: attr(data-placeholder);
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
+        /* Date picker — cross browser */
+        .date-display {
             font-size: 16px;
-            pointer-events: none;
+            color: #999;
+            cursor: pointer;
+            width: 100%;
             display: block;
         }
-        .date-wrapper.has-value::before {
-            display: none;
+        .date-display.has-value {
+            color: #333;
+        }
+        /* Hidden native input */
+        .date-hidden {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
         }
 
         .btn-search-main {
@@ -371,16 +347,14 @@
                 </div>
 
                 <!-- Date -->
-                <div class="search-section" style="cursor:pointer;" onclick="document.getElementById('search-date').focus(); document.getElementById('search-date').click();">
+                <div class="search-section" style="cursor:pointer;" id="date-section" onclick="openDatePicker()">
                     <div class="search-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--tm-bright-blue)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     </div>
                     <div class="search-text">
                         <span class="search-label">Dates</span>
-                        <div class="date-wrapper" data-placeholder="All Dates" id="date-wrapper">
-                            <input type="date" id="search-date" class="search-input date-input"
-                                   style="cursor:pointer; width:100%;">
-                        </div>
+                        <span class="date-display" id="date-display">All Dates</span>
+                        <input type="date" id="search-date" class="date-hidden">
                     </div>
                 </div>
 
@@ -887,8 +861,8 @@ function resetToHome() {
     locationInput.value  = '';
     activeAttractionId   = ''; // Clear attractionId on reset
     document.getElementById('search-date').value = '';
-    document.getElementById('date-wrapper')?.classList.remove('has-value');
-    document.getElementById('search-date')?.classList.remove('has-value');
+    const dd = document.getElementById('date-display');
+    if (dd) { dd.textContent = 'All Dates'; dd.classList.remove('has-value'); }
     loadPopular(); // ← City re-detect + Popular refresh
 }
 
@@ -938,15 +912,28 @@ document.querySelectorAll('.nav-link-filter').forEach(link => {
 // ════════════════════════════════════════════════
 // EVENT LISTENERS + PAGE LOAD
 // ════════════════════════════════════════════════
-// Date input — toggle has-value class for placeholder
+// Date picker — cross browser solution
+function openDatePicker() {
+    const input = document.getElementById('search-date');
+    // Try showPicker (modern browsers)
+    if (input.showPicker) {
+        try { input.showPicker(); return; } catch(e) {}
+    }
+    // Fallback — direct click
+    input.click();
+}
+
 document.getElementById('search-date').addEventListener('change', function() {
-    const wrapper = document.getElementById('date-wrapper');
+    const display = document.getElementById('date-display');
     if (this.value) {
-        wrapper.classList.add('has-value');
-        this.classList.add('has-value');
+        const d      = new Date(this.value + 'T00:00:00');
+        const months = ['Jan','Feb','Mar','Apr','May','Jun',
+                        'Jul','Aug','Sep','Oct','Nov','Dec'];
+        display.textContent = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+        display.classList.add('has-value');
     } else {
-        wrapper.classList.remove('has-value');
-        this.classList.remove('has-value');
+        display.textContent = 'All Dates';
+        display.classList.remove('has-value');
     }
 });
 
