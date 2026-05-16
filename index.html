@@ -379,13 +379,7 @@
                         <span class="search-label">Dates</span>
                         <div class="date-wrapper" data-placeholder="All Dates" id="date-wrapper">
                             <input type="date" id="search-date" class="search-input date-input"
-                                   style="cursor:pointer; width:90%;"
-                                   value=""
-                                   autocomplete="off">
-                            <span id="date-clear-btn"
-                                  onclick="clearDate(event)"
-                                  style="display:none; position:absolute; right:0; top:50%; transform:translateY(-50%); cursor:pointer; color:#999; font-size:18px; padding:0 4px; z-index:10;"
-                                  title="Clear date">✕</span>
+                                   style="cursor:pointer; width:100%;">
                         </div>
                     </div>
                 </div>
@@ -895,8 +889,6 @@ function resetToHome() {
     document.getElementById('search-date').value = '';
     document.getElementById('date-wrapper')?.classList.remove('has-value');
     document.getElementById('search-date')?.classList.remove('has-value');
-    const cb = document.getElementById('date-clear-btn');
-    if (cb) cb.style.display = 'none';
     loadPopular(); // ← City re-detect + Popular refresh
 }
 
@@ -946,32 +938,17 @@ document.querySelectorAll('.nav-link-filter').forEach(link => {
 // ════════════════════════════════════════════════
 // EVENT LISTENERS + PAGE LOAD
 // ════════════════════════════════════════════════
-// Date input — toggle has-value + clear button
+// Date input — toggle has-value class for placeholder
 document.getElementById('search-date').addEventListener('change', function() {
-    const wrapper   = document.getElementById('date-wrapper');
-    const clearBtn  = document.getElementById('date-clear-btn');
+    const wrapper = document.getElementById('date-wrapper');
     if (this.value) {
         wrapper.classList.add('has-value');
         this.classList.add('has-value');
-        if (clearBtn) clearBtn.style.display = 'block'; // Show ✕
     } else {
         wrapper.classList.remove('has-value');
         this.classList.remove('has-value');
-        if (clearBtn) clearBtn.style.display = 'none';  // Hide ✕
     }
 });
-
-// Clear date button — Safari + all browsers
-function clearDate(e) {
-    e.stopPropagation(); // Section click prevent
-    const input    = document.getElementById('search-date');
-    const wrapper  = document.getElementById('date-wrapper');
-    const clearBtn = document.getElementById('date-clear-btn');
-    input.value    = '';
-    wrapper.classList.remove('has-value');
-    input.classList.remove('has-value');
-    if (clearBtn) clearBtn.style.display = 'none';
-}
 
 document.getElementById('search-btn').addEventListener('click', doSearch);
 document.getElementById('mobile-search-btn').addEventListener('click', doSearch);
