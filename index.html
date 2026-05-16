@@ -77,7 +77,7 @@
             width:100%; background:transparent;
         }
 
-        /* Date picker — native, works on all browsers + mobile */
+        /* Date picker — works on all browsers + mobile + desktop */
         .date-wrapper {
             position: relative;
             width: 100%;
@@ -86,26 +86,25 @@
             border: none;
             outline: none;
             font-size: 16px;
-            color: transparent;
+            color: #333;
             width: 100%;
             background: transparent;
             cursor: pointer;
             font-family: 'Inter', sans-serif;
-            position: relative;
-            z-index: 1;
         }
-        .date-input.has-value {
-            color: #333;
-        }
+        /* Hide placeholder text — show "All Dates" span instead */
         .date-placeholder {
             position: absolute;
-            top: 0; left: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             font-size: 16px;
             color: #999;
             pointer-events: none;
-            z-index: 0;
-            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            background: white;
+            z-index: 2;
         }
+        /* When date selected — hide "All Dates", show native date */
         .date-wrapper.has-value .date-placeholder {
             display: none;
         }
