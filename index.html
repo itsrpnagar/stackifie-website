@@ -77,35 +77,6 @@
             width:100%; background:transparent;
         }
 
-        /* Date picker — all browsers, all devices */
-        .date-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        .date-input {
-            border: none;
-            outline: none;
-            font-size: 16px;
-            color: #333;
-            width: 100%;
-            background: transparent;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-        }
-        /* "All Dates" — shown OVER input when no date selected */
-        .date-placeholder {
-            position: absolute;
-            top: 0; left: 0; right: 24px; bottom: 0;
-            font-size: 16px;
-            color: #999;
-            pointer-events: none; /* Click passes through to input */
-            display: flex;
-            align-items: center;
-            background: white;
-        }
-        .date-wrapper.has-value .date-placeholder {
-            display: none; /* Hide when date selected */
-        }
         .btn-search-main {
             background-color: var(--tm-bright-blue);
             color: white; border: none; border-radius: 4px;
@@ -362,10 +333,7 @@
                     </div>
                     <div class="search-text">
                         <span class="search-label">Dates</span>
-                        <div class="date-wrapper" id="date-wrapper">
-                            <span class="date-placeholder">All Dates</span>
-                            <input type="date" id="search-date" class="date-input">
-                        </div>
+                        <input type="date" id="search-date" class="search-input">
                     </div>
                 </div>
 
@@ -872,8 +840,6 @@ function resetToHome() {
     locationInput.value  = '';
     activeAttractionId   = ''; // Clear attractionId on reset
     document.getElementById('search-date').value = '';
-    document.getElementById('search-date').classList.remove('has-value');
-    document.getElementById('date-wrapper').classList.remove('has-value');
     loadPopular(); // ← City re-detect + Popular refresh
 }
 
@@ -923,17 +889,7 @@ document.querySelectorAll('.nav-link-filter').forEach(link => {
 // ════════════════════════════════════════════════
 // EVENT LISTENERS + PAGE LOAD
 // ════════════════════════════════════════════════
-// Date picker — native input change handler
-document.getElementById('search-date').addEventListener('change', function() {
-    const wrapper = document.getElementById('date-wrapper');
-    if (this.value) {
-        this.classList.add('has-value');
-        wrapper.classList.add('has-value');
-    } else {
-        this.classList.remove('has-value');
-        wrapper.classList.remove('has-value');
-    }
-});
+
 
 document.getElementById('search-btn').addEventListener('click', doSearch);
 document.getElementById('mobile-search-btn').addEventListener('click', doSearch);
