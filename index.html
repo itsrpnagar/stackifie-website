@@ -371,14 +371,15 @@
                 </div>
 
                 <!-- Date -->
-                <div class="search-section">
+                <div class="search-section" style="cursor:pointer;" onclick="document.getElementById('search-date').focus(); document.getElementById('search-date').click();">
                     <div class="search-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--tm-bright-blue)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     </div>
                     <div class="search-text">
                         <span class="search-label">Dates</span>
                         <div class="date-wrapper" data-placeholder="All Dates" id="date-wrapper">
-                            <input type="date" id="search-date" class="search-input date-input">
+                            <input type="date" id="search-date" class="search-input date-input"
+                                   style="cursor:pointer; width:100%;">
                         </div>
                     </div>
                 </div>
@@ -480,8 +481,7 @@
             <p class="mb-1">&copy; 2026 <strong>Stackifie.online</strong> | A brand managed by <strong>Streamernet Info Private Limited</strong></p>
             <p class="mb-3">Registered Office: 2169/11 Moti Nagar, Ambala, Haryana, 134003</p>
             <p class="small opacity-50 mx-auto" style="max-width:800px;">
-                Disclaimer: Stackifie is a secondary market resale marketplace. We are not the primary ticket provider
-                or official box office. Ticket prices are set by independent sellers and may be above or below face value.
+                Disclaimer: Stackifie is a ticket aggregator and is not affiliated with any artist, team, venue, or event organizer. We do not sell tickets directly. All ticket purchases are completed on Ticketmaster.com. Prices may be above face value.
             </p>
         </div>
     </div>
