@@ -868,13 +868,11 @@ async function doSearch() {
         } else if (keyword) {
             params.append('keyword', keyword);
         }
-        // City + stateCode — "New York, NY" → city="New York" + stateCode="NY"
+        // City only — "New York, NY" → city="New York"
+        // stateCode remove — over-restricts results in large cities
         if (city) {
-            const parts    = city.split(',');
-            const cityOnly = parts[0].trim();
-            const state    = parts[1]?.trim() || '';
+            const cityOnly = city.split(',')[0].trim();
             params.append('city', cityOnly);
-            if (state) params.append('stateCode', state);
         }
         if (date)          params.append('date', date);
         if (activeSegment) params.append('segment', activeSegment);
