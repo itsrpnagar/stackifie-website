@@ -226,6 +226,8 @@
 
         /* ── GRID CARDS ── */
         .section-title { font-weight:800; font-size:22px; margin-bottom:20px; color:var(--tm-text); }
+        .see-all-link { font-size:14px; font-weight:600; color:var(--tm-bright-blue); text-decoration:none; }
+        .see-all-link:hover { text-decoration:underline; }
 
         .grid-card {
             border:1px solid #e0e0e0; border-radius:8px;
@@ -424,6 +426,20 @@
 <div class="container mt-5 pt-3" id="popular-section">
     <h2 class="section-title">Popular Near You</h2>
     <div class="row g-4" id="popular-events">
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+    </div>
+</div>
+
+<!-- ══════ THIS WEEKEND ══════ -->
+<div class="container mt-5 pt-3" id="weekend-section">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-title mb-0">This Weekend</h2>
+        <a href="#" onclick="searchAll('weekend')" class="see-all-link">See All →</a>
+    </div>
+    <div class="row g-4" id="weekend-events">
         <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
         <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
         <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
@@ -803,6 +819,20 @@ async function loadTrending() {
     }
 }
 
+async function loadWeekend() {
+    try {
+        const res  = await fetch(`${SERVER_URL}/api/weekend`);
+        const data = await res.json();
+        const el   = document.getElementById('weekend-events');
+        el.innerHTML = data.success && data.events.length
+            ? data.events.map(cardHTML).join('')
+            : '<p class="text-muted col">No events this weekend.</p>';
+    } catch(e) {
+        document.getElementById('weekend-events').innerHTML =
+            '<p class="text-muted col">Unable to connect.</p>';
+    }
+}
+
 async function loadTheater() {
     try {
         const segParam = activeSegment ? `?segment=${encodeURIComponent(activeSegment)}` : '';
@@ -848,7 +878,7 @@ async function doSearch() {
     closeDropdown(searchDropdown);
 
     document.getElementById('search-results-section').style.display = 'block';
-    ['featured-section','popular-section','trending-section','theater-section','trending-searches-section']
+    ['featured-section','popular-section','weekend-section','trending-section','theater-section','trending-searches-section']
         .forEach(id => document.getElementById(id).style.display = 'none');
 
     const list = document.getElementById('search-results-list');
@@ -907,7 +937,7 @@ async function doSearch() {
 // ════════════════════════════════════════════════
 function resetToHome() {
     document.getElementById('search-results-section').style.display = 'none';
-    ['featured-section','popular-section','trending-section','theater-section','trending-searches-section']
+    ['featured-section','popular-section','weekend-section','trending-section','theater-section','trending-searches-section']
         .forEach(id => document.getElementById(id).style.display = 'block');
     keywordInput.value   = '';
     locationInput.value  = '';
@@ -982,12 +1012,22 @@ document.getElementById('search-date').addEventListener('change', function() {
     }
 });
 
+// See All — category search
+function searchAll(type) {
+    if (type === 'weekend') {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('search-date').value = today;
+    }
+    doSearch();
+}
+
 document.getElementById('search-btn').addEventListener('click', doSearch);
 document.getElementById('mobile-search-btn').addEventListener('click', doSearch);
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadFeatured();
     loadPopular();
+    loadWeekend();
+    loadFeatured();
     loadTrending();
     loadTheater();
     loadTrendingSearches();
