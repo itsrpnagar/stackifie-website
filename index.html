@@ -881,12 +881,13 @@ async function doSearch() {
         const data = await res.json();
 
         if (data.success && data.events.length) {
-            // Deduplicate — same date + city + time = same show, keep first only
-            // venue name alag ho sakta hai (Richard Rodgers vs Richard Rodgers-NY)
-            // isliye city + rawDate + time use karo
+            // Deduplicate — same show name + same date = 1 result
+            // "Venetian Gondolas" MAY 17 = 1 card (not 3 different times)
             const seen = new Set();
             const uniqueEvents = data.events.filter(ev => {
-                const key = `${ev.rawDate}_${ev.city}_${ev.date}`;
+                // Show name normalize + date = unique key
+                const showName = ev.name.toLowerCase().replace(/\s+/g, ' ').trim();
+                const key = `${showName}_${ev.rawDate}_${ev.city}`;
                 if (seen.has(key)) return false;
                 seen.add(key);
                 return true;
