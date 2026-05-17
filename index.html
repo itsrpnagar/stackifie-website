@@ -634,7 +634,8 @@ const fetchLocation = debounce(async (kw) => {
                 locationInput.value = item.dataset.value;
                 closeDropdown(locationDropdown);
                 // Popular Near You update karo new city se
-                loadPopular(item.dataset.city || item.dataset.value);
+                // City se state remove karo — 'New York, NY' → 'New York'
+                loadPopular(item.dataset.value.split(',')[0].trim());
             });
         });
 
@@ -866,7 +867,11 @@ async function doSearch() {
         } else if (keyword) {
             params.append('keyword', keyword);
         }
-        if (city)          params.append('city', city);
+        // City se state remove karo — "New York, NY" → "New York"
+        if (city) {
+            const cityOnly = city.split(',')[0].trim();
+            params.append('city', cityOnly);
+        }
         if (date)          params.append('date', date);
         if (activeSegment) params.append('segment', activeSegment);
 
