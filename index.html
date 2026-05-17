@@ -420,9 +420,10 @@
 </div>
 
 <!-- ══════ FEATURED EVENTS ══════ -->
-<div class="container mt-5 pt-3" id="featured-section">
-    <h2 class="section-title">Featured Events</h2>
-    <div class="row g-4" id="featured-events">
+<!-- ══════ POPULAR NEAR YOU ══════ -->
+<div class="container mt-5 pt-3" id="popular-section">
+    <h2 class="section-title">Popular Near You</h2>
+    <div class="row g-4" id="popular-events">
         <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
         <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
         <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
@@ -430,10 +431,10 @@
     </div>
 </div>
 
-<!-- ══════ POPULAR NEAR YOU ══════ -->
-<div class="container mt-5 pt-3" id="popular-section">
-    <h2 class="section-title">Popular Near You</h2>
-    <div class="row g-4" id="popular-events">
+<!-- ══════ FEATURED EVENTS ══════ -->
+<div class="container mt-5 pt-3" id="featured-section">
+    <h2 class="section-title">Featured Events</h2>
+    <div class="row g-4" id="featured-events">
         <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
         <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
         <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
@@ -727,20 +728,21 @@ async function loadFeatured() {
 }
 
 // ════════════════════════════════════════════════
-// IP DETECTION — Industry Standard (like TM/StubHub)
-// ipapi.co free tier — 1000 requests/day
+// CITY DETECTION — Vercel Headers (FREE, Unlimited)
+// x-vercel-ip-city = User ki detected city
+// Fallback: New York
 // ════════════════════════════════════════════════
 async function detectCity() {
     try {
-        const res  = await fetch('https://ipapi.co/json/');
+        // Vercel injects city via API endpoint
+        const res  = await fetch('/api/location');
         const data = await res.json();
-        // Only use if US location detected
-        if (data.country_code === 'US' && data.city) {
+        if (data.city && data.country === 'US') {
             return data.city;
         }
-        return 'New York'; // Default fallback
+        return 'New York';
     } catch(e) {
-        return 'New York'; // Network error fallback
+        return 'New York';
     }
 }
 
