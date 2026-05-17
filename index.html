@@ -453,6 +453,17 @@
     </div>
 </div>
 
+<!-- ══════ THEATER & ARTS ══════ -->
+<div class="container my-5 pt-3" id="theater-section">
+    <h2 class="section-title">Theater &amp; Arts</h2>
+    <div class="row g-4" id="theater-events">
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+    </div>
+</div>
+
 <!-- ══════ TRENDING SEARCHES ══════ -->
 <div class="container my-5 pt-2 pb-4" id="trending-searches-section">
     <h2 class="section-title">Trending Searches</h2>
@@ -792,6 +803,21 @@ async function loadTrending() {
     }
 }
 
+async function loadTheater() {
+    try {
+        const segParam = activeSegment ? `?segment=${encodeURIComponent(activeSegment)}` : '';
+        const res  = await fetch(`${SERVER_URL}/api/theater${segParam}`);
+        const data = await res.json();
+        const el   = document.getElementById('theater-events');
+        el.innerHTML = data.success && data.events.length
+            ? data.events.map(cardHTML).join('')
+            : '<p class="text-muted col">Unable to load events.</p>';
+    } catch(e) {
+        document.getElementById('theater-events').innerHTML =
+            '<p class="text-muted col">Unable to connect to server.</p>';
+    }
+}
+
 async function loadTrendingSearches() {
     try {
         const res  = await fetch(`${SERVER_URL}/api/trending-searches`);
@@ -822,7 +848,7 @@ async function doSearch() {
     closeDropdown(searchDropdown);
 
     document.getElementById('search-results-section').style.display = 'block';
-    ['featured-section','popular-section','trending-section','trending-searches-section']
+    ['featured-section','popular-section','trending-section','theater-section','trending-searches-section']
         .forEach(id => document.getElementById(id).style.display = 'none');
 
     const list = document.getElementById('search-results-list');
@@ -881,7 +907,7 @@ async function doSearch() {
 // ════════════════════════════════════════════════
 function resetToHome() {
     document.getElementById('search-results-section').style.display = 'none';
-    ['featured-section','popular-section','trending-section','trending-searches-section']
+    ['featured-section','popular-section','trending-section','theater-section','trending-searches-section']
         .forEach(id => document.getElementById(id).style.display = 'block');
     keywordInput.value   = '';
     locationInput.value  = '';
@@ -927,11 +953,17 @@ document.querySelectorAll('.nav-link-filter').forEach(link => {
             <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
             <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
             <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>`;
+        document.getElementById('theater-events').innerHTML = `
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
+            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>`;
 
         // Filtered data load karo
         loadFeatured();
         loadPopular();
         loadTrending();
+        loadTheater();
     });
 });
 
@@ -957,6 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFeatured();
     loadPopular();
     loadTrending();
+    loadTheater();
     loadTrendingSearches();
 });
 </script>
