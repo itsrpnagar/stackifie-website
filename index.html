@@ -433,20 +433,6 @@
     </div>
 </div>
 
-<!-- ══════ THIS WEEKEND ══════ -->
-<div class="container mt-5 pt-3" id="weekend-section">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="section-title mb-0">This Weekend</h2>
-        <a href="#" onclick="searchAll('weekend')" class="see-all-link">See All →</a>
-    </div>
-    <div class="row g-4" id="weekend-events">
-        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-        <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-    </div>
-</div>
-
 <!-- ══════ FEATURED EVENTS ══════ -->
 <div class="container mt-5 pt-3" id="featured-section">
     <h2 class="section-title">Featured Events</h2>
@@ -819,20 +805,6 @@ async function loadTrending() {
     }
 }
 
-async function loadWeekend() {
-    try {
-        const res  = await fetch(`${SERVER_URL}/api/weekend`);
-        const data = await res.json();
-        const el   = document.getElementById('weekend-events');
-        el.innerHTML = data.success && data.events.length
-            ? data.events.map(cardHTML).join('')
-            : '<p class="text-muted col">No events this weekend.</p>';
-    } catch(e) {
-        document.getElementById('weekend-events').innerHTML =
-            '<p class="text-muted col">Unable to connect.</p>';
-    }
-}
-
 async function loadTheater() {
     try {
         const segParam = activeSegment ? `?segment=${encodeURIComponent(activeSegment)}` : '';
@@ -878,7 +850,7 @@ async function doSearch() {
     closeDropdown(searchDropdown);
 
     document.getElementById('search-results-section').style.display = 'block';
-    ['featured-section','popular-section','weekend-section','trending-section','theater-section','trending-searches-section']
+    ['featured-section','popular-section','trending-section','theater-section','trending-searches-section']
         .forEach(id => document.getElementById(id).style.display = 'none');
 
     const list = document.getElementById('search-results-list');
@@ -937,7 +909,7 @@ async function doSearch() {
 // ════════════════════════════════════════════════
 function resetToHome() {
     document.getElementById('search-results-section').style.display = 'none';
-    ['featured-section','popular-section','weekend-section','trending-section','theater-section','trending-searches-section']
+    ['featured-section','popular-section','trending-section','theater-section','trending-searches-section']
         .forEach(id => document.getElementById(id).style.display = 'block');
     keywordInput.value   = '';
     locationInput.value  = '';
@@ -1026,7 +998,6 @@ document.getElementById('mobile-search-btn').addEventListener('click', doSearch)
 
 document.addEventListener('DOMContentLoaded', () => {
     loadPopular();
-    loadWeekend();
     loadFeatured();
     loadTrending();
     loadTheater();
