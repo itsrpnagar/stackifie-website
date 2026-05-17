@@ -516,7 +516,7 @@ function safeImg(src) { return src || FALLBACK_IMG; }
 function cardHTML(event) {
     const location = [event.venue, event.city + (event.state ? ', '+event.state : '')].filter(Boolean).join(' • ');
     return `
-    <div class="col-md-3 col-sm-6 col-12">
+    <div class="col-md-3 col-sm-6 col-12 event-card-item" data-segment="${event.segment || ''}">
         <a href="${event.url || event.attractionUrl || 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(event.name)}" target="_blank" rel="noopener" class="grid-card">
             <img src="${safeImg(event.image)}" alt="${event.name}" onerror="this.src='${FALLBACK_IMG}'">
             <div class="card-body p-3">
@@ -531,7 +531,7 @@ function cardHTML(event) {
 function trendingRowHTML(event) {
     const location = [event.venue, event.city+(event.state?', '+event.state:'')].filter(Boolean).join(' • ');
     return `
-    <div class="row align-items-center py-3 event-list-card">
+    <div class="row align-items-center py-3 event-list-card event-card-item" data-segment="${event.segment || ''}">
         <div class="col-auto date-box">
             <div class="month">${event.monthShort||'---'}</div>
             <div class="day">${event.dayNum||'--'}</div>
@@ -921,8 +921,35 @@ function resetToHome() {
 }
 
 // ════════════════════════════════════════════════
-// NAV FILTER — Concerts / Sports / Arts
+// NAV FILTER — Client-side filter, NO API calls
 // ════════════════════════════════════════════════
+function applyNavFilter(segment) {
+    // All event cards filter
+    document.querySelectorAll('.event-card-item').forEach(card => {
+        if (!segment) {
+            // All Events — show everything
+            card.style.display = '';
+        } else {
+            const cardSeg = card.dataset.segment || '';
+            card.style.display = cardSeg === segment ? '' : 'none';
+        }
+    });
+
+    // Theater section — show/hide based on segment
+    const theaterSection = document.getElementById('theater-section');
+    if (theaterSection) {
+        if (!segment || segment === 'Arts & Theatre') {
+            theaterSection.style.display = 'block';
+        } else {
+            theaterSection.style.display = 'none';
+        }
+    }
+
+    // Trending Searches — always show
+    const tsSection = document.getElementById('trending-searches-section');
+    if (tsSection) tsSection.style.display = 'block';
+}
+
 document.querySelectorAll('.nav-link-filter').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -936,36 +963,14 @@ document.querySelectorAll('.nav-link-filter').forEach(link => {
 
         // Search results hide — home show
         document.getElementById('search-results-section').style.display = 'none';
-        ['featured-section','popular-section','trending-section','trending-searches-section']
-            .forEach(id => document.getElementById(id).style.display = 'block');
+        ['featured-section','popular-section','trending-section','theater-section','trending-searches-section']
+            .forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'block';
+            });
 
-        // Skeleton reload
-        document.getElementById('featured-events').innerHTML = `
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>`;
-        document.getElementById('trending-events').innerHTML = `
-            <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
-            <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
-            <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>
-            <div class="skeleton skeleton-line" style="height:64px;margin-bottom:10px;"></div>`;
-        document.getElementById('popular-events').innerHTML = `
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>`;
-        document.getElementById('theater-events').innerHTML = `
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>
-            <div class="col-md-3 col-sm-6 col-12"><div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line mt-2"></div><div class="skeleton skeleton-line short"></div></div></div>`;
-
-        // Filtered data load karo
-        loadFeatured();
-        loadPopular();
-        loadTrending();
-        loadTheater();
+        // Client-side filter — 0 API calls ✅
+        applyNavFilter(activeSegment);
     });
 });
 
