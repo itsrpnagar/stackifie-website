@@ -27,5 +27,5 @@
             document.body.appendChild(mountPoint);
         });
 
-    }, 5000);
+    }, 0);
 })();
