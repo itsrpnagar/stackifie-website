@@ -892,13 +892,10 @@ async function doSearch() {
         const data = await res.json();
 
         if (data.success && data.events.length) {
-            // Deduplicate — same show name + same date = 1 result
-            // "Venetian Gondolas" MAY 17 = 1 card (not 3 different times)
+            // Deduplicate — TM Event ID se (100% accurate, no false duplicates)
             const seen = new Set();
             const uniqueEvents = data.events.filter(ev => {
-                // Show name normalize + date = unique key
-                const showName = ev.name.toLowerCase().replace(/\s+/g, ' ').trim();
-                const key = `${showName}_${ev.rawDate}_${ev.city}`;
+                const key = ev.id;
                 if (seen.has(key)) return false;
                 seen.add(key);
                 return true;
