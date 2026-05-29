@@ -309,7 +309,7 @@
         /* ── MOBILE ── */
         @media (max-width: 768px) {
             .tm-header-bg  { padding-bottom:0; }
-            .navbar-brand  { font-size:1.5rem; }
+            .navbar-brand  { display:none; }
             .search-bar-wrapper { margin:0 -12px; }
 
             .search-bar-complex {
@@ -335,7 +335,15 @@
                 left: 0; right: 0;
                 border-radius: 0 0 4px 4px;
             }
+
+            /* Mobile Flag + Person Icon */
+            .mobile-nav-flag   { display:flex; }
+            .mobile-nav-person { display:flex; }
         }
+
+        /* Desktop — hide mobile elements */
+        .mobile-nav-flag   { display:none; }
+        .mobile-nav-person { display:none; }
     </style>
 </head>
 <body>
@@ -356,11 +364,25 @@
         <div class="top-nav">
             <div class="nav-left">
                 <a href="/" class="navbar-brand">stackifie<span style="font-size:12px;vertical-align:super;">®</span></a>
+                <!-- Mobile Only: Flag -->
+                <div class="mobile-nav-flag" style="align-items:center; gap:6px;">
+                    <img src="https://flagcdn.com/w40/us.png"
+                         alt="US"
+                         style="width:28px; height:28px; border-radius:50%; border:2px solid #fff; object-fit:cover; display:block;">
+                    <span style="font-size:13px; color:#fff; font-weight:400;">US</span>
+                </div>
                 <div class="nav-links">
                     <a href="#" class="nav-link-filter active" data-segment="Music">Concerts</a>
                     <a href="#" class="nav-link-filter" data-segment="Sports">Sports</a>
                     <a href="#" class="nav-link-filter" data-segment="Arts &amp; Theatre">Arts, Theater &amp; Comedy</a>
                 </div>
+            </div>
+            <!-- Mobile Only: Person Icon -->
+            <div class="mobile-nav-person" style="width:28px; height:28px; border-radius:50%; background:#000; border:1.5px solid #444; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
             </div>
         </div>
 
