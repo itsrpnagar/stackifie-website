@@ -335,17 +335,17 @@
                 left: 0; right: 0;
                 border-radius: 0 0 4px 4px;
             }
+        }
 
         /* Desktop — hide mobile elements */
         .mobile-nav-flag   { display:none; align-items:center; gap:6px; }
         .mobile-nav-person { display:none; align-items:center; justify-content:center; }
 
-        /* Mobile Flag + Person Icon */
+        /* Mobile only — show flag and person icon */
         @media (max-width: 768px) {
             .mobile-nav-flag   { display:flex !important; }
             .mobile-nav-person { display:flex !important; }
         }
-    </style>
 </head>
 <body>
 
