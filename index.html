@@ -833,7 +833,12 @@ async function loadFeatured() {
 // ════════════════════════════════════════════════
 async function detectCity() {
     try {
-        const res  = await fetch('https://ipapi.co/json/');
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch('https://ipapi.co/json/', {
+            signal: controller.signal
+        });
+        clearTimeout(timer);
         const data = await res.json();
         if (data.country_code === 'US' && data.city) {
             return data.city;
@@ -1087,16 +1092,18 @@ document.getElementById('search-btn').addEventListener('click', doSearch);
 document.getElementById('mobile-search-btn').addEventListener('click', doSearch);
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadPopular();
-    loadFeatured();
-    loadTrending();
-    loadTheater();
-    loadTrendingSearches();
+    Promise.all([
+        loadFeatured(),
+        loadPopular(),
+        loadTrending(),
+        loadTheater(),
+        loadTrendingSearches()
+    ]);
 });
 </script>
 
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script src="ui-metrics.js"></script>
+    <script defer src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script defer src="ui-metrics.js"></script>
     
     <!-- Event snippet for See Tickets conversion -->
     <script>
