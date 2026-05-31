@@ -601,7 +601,7 @@ function cardHTML(event) {
     return `
     <div class="col-md-3 col-sm-6 col-12">
         <a href="${event.url || event.attractionUrl || 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(event.name)}" target="_blank" rel="noopener" class="grid-card" onclick="gtag_report_conversion('${event.url || event.attractionUrl || 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(event.name)}')">
-            <img src="${safeImg(event.image)}" alt="${event.name}" loading="lazy" onerror="this.src='${FALLBACK_IMG}'">
+            <img src="${safeImg(event.image)}" alt="${event.name}" onerror="this.src='${FALLBACK_IMG}'">
             <div class="card-body p-3">
                 <p class="grid-date mb-1">${event.date||'UPCOMING'}</p>
                 <h6 class="fw-bold mb-1" style="font-size:14px;line-height:1.3;">${event.name}</h6>
@@ -635,7 +635,7 @@ function searchCardHTML(attr) {
         <a href="${attr.url || 'https://www.ticketmaster.com'}" target="_blank" rel="noopener" class="grid-card border-0 shadow-sm" style="text-decoration:none;">
             <img src="${safeImg(attr.image)}" alt="${attr.name}"
                  style="height:160px;object-fit:cover;width:100%;display:block;"
-                 loading="lazy"
+                
                  onerror="this.src='${FALLBACK_IMG}'">
             <div class="card-body text-center p-3">
                 <p class="grid-date mb-1 text-secondary">TOP SEARCH</p>
@@ -649,7 +649,7 @@ function searchResultHTML(event) {
     const location = [event.venue, event.city+(event.state?', '+event.state:'')].filter(Boolean).join(' • ');
     return `
     <a href="${event.url || event.attractionUrl || 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(event.name)}" target="_blank" rel="noopener" class="search-result-item" onclick="gtag_report_conversion('${event.url || event.attractionUrl || 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(event.name)}')">
-        <img src="${safeImg(event.image)}" alt="${event.name}" class="search-result-img" loading="lazy" onerror="this.src='${FALLBACK_IMG}'">
+        <img src="${safeImg(event.image)}" alt="${event.name}" class="search-result-img" onerror="this.src='${FALLBACK_IMG}'">
         <div class="flex-grow-1">
             <div class="fw-bold">${event.name}</div>
             <div class="text-muted small">${event.date||'Date TBD'}</div>
