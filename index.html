@@ -827,17 +827,19 @@ async function loadFeatured() {
 }
 
 // ════════════════════════════════════════════════
-// CITY DETECTION — ipapi.co (Industry Standard)
+// CITY DETECTION — Server side
 // Fallback: New York
 // ════════════════════════════════════════════════
 async function detectCity() {
     try {
-        const res  = await fetch('https://ipapi.co/json/');
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch(`${SERVER_URL}/api/city`, {
+            signal: controller.signal
+        });
+        clearTimeout(timer);
         const data = await res.json();
-        if (data.country_code === 'US' && data.city) {
-            return data.city;
-        }
-        return 'New York';
+        return data.city || 'New York';
     } catch(e) {
         return 'New York';
     }
